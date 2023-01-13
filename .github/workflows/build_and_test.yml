@@ -1,11 +1,10 @@
 name: Lock Service Testrun
 
 on:
-  push:
   workflow_dispatch:
   
 jobs:
-  test:
+  Test:
     runs-on: ubuntu-latest
     
     steps:
@@ -17,6 +16,14 @@ jobs:
       with:
         java-version: 17
         distribution: temurin
-    
+        
+    - name: Cache local Maven repository
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+          
     - name: Unit Tests
       run: mvn test -Dtest=AmazingUnitTest

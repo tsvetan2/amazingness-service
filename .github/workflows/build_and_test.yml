@@ -125,18 +125,34 @@ jobs:
 #           username: ${{ secrets.USER_GITHUB }}
 #           password: ${{ secrets.PASSWORD_GITHUB }}
           
-      - name: Helm
-        id: helm
+#       - name: Helm
+#         id: helm
+#         run: |
+#             cd helm
+#             helm dependency update
+#             cd ..
+#             helm package helm     
+#             echo ${{ github.repository_owner }}
+#             echo ${{ secrets.PASSWORD_GITHUB }}
+#             echo ${{ secrets.PASSWORD_GITHUB }} | helm registry login ghcr.io --username ${{ secrets.USER_GITHUB }} --password-stdin
+#             helm push amazingness-service*.tgz oci://ghcr.io/cekocvetkov
+            
+      - uses: actions/checkout@v2
+      - name: Login to ghcr container registry
         run: |
-            cd helm
-            helm dependency update
-            cd ..
-            helm package helm     
-            echo ${{ github.repository_owner }}
-            echo ${{ secrets.PASSWORD_GITHUB }}
-            echo ${{ secrets.PASSWORD_GITHUB }} | helm registry login ghcr.io --username ${{ secrets.USER_GITHUB }} --password-stdin
-            helm push amazingness-service*.tgz oci://ghcr.io/cekocvetkov
-  #            echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+          REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          
+      - name: Pushing Helm Chart
+        run: |
+          REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
+          cd helm
+          helm dependency update
+          cd ..
+          helm package helm   
+          PKG_NAME=`ls *.tgz`
+          helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts
+
 #   Snyk:
 #     runs-on: ubuntu-latest
 #     steps:

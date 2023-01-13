@@ -77,8 +77,6 @@
 ###
 FROM registry.access.redhat.com/ubi8/openjdk-17:1.14
 
-LABEL org.opencontainers.image.source https://github.com/cekocvetkov/amazingness-service
-
 ENV LANGUAGE='en_US:en'
 
 

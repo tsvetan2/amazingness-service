@@ -114,6 +114,8 @@ jobs:
     name: Build and push to GitHub Container Registry
 #     needs: [Build-and-push-docker-image]
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v3
         name: Checkout

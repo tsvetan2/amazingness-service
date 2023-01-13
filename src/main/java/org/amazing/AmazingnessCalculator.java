@@ -17,7 +17,6 @@ public class AmazingnessCalculator
 
     public boolean isPersonAmazing(String name){
         LOG.info( "Somebody is trying to see if person '"+name+"' is amazing..." );
-        System.out.println(amazingNames.contains( name ));
         if(amazingNames.contains( name )) {
             LOG.info( "Well, yes! '"+name+"' is amazing!" );
             return true;

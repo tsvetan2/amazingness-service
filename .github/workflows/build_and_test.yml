@@ -131,8 +131,9 @@ jobs:
             cd helm
             helm dependency update
             cd ..
-            helm package helm        
-            echo ${{ secrets.PASSWORD_GITHUB }} | helm registry login ghcr.io --username  ${{ secrets.USER_GITHUB }} --password-stdin
+            helm package helm     
+            echo ${{ secrets.PASSWORD_GITHUB }}
+            echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
             helm push amazingness-service*.tgz oci://ghcr.io/cekocvetkov
   
 #   Snyk:

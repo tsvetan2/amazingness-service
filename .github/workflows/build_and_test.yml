@@ -112,7 +112,7 @@ jobs:
           
   Build-and-push-helm-chart:
     name: Build and push to GitHub Container Registry
-    needs: [Build-and-push-docker-image]
+#     needs: [Build-and-push-docker-image]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -132,9 +132,9 @@ jobs:
             helm dependency update
             cd ..
             helm package helm        
+            echo ${{ secrets.PASSWORD_GITHUB }} | helm registry login ghcr.io --username  ${{ secrets.USER_GITHUB }} --password-stdin
             helm push amazingness-service*.tgz oci://ghcr.io/cekocvetkov
   
-#             echo ${{ secrets.PASSWORD_GITHUB }} | helm registry login ghcr.io --username  ${{ secrets.USER_GITHUB }} --password-stdin
 #   Snyk:
 #     runs-on: ubuntu-latest
 #     steps:

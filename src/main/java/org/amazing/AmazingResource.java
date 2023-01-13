@@ -18,8 +18,6 @@ public class AmazingResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public AmazingResponse isPersonAmazing(@QueryParam( "name" ) String name) {
-        System.out.println("!!!!!!!");
-        System.out.println(name);
         boolean isPersonAmazing = amazingService.isPersonAmazing(name);
         return new AmazingResponse(isPersonAmazing);
     }

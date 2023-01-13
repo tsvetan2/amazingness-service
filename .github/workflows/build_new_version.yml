@@ -131,7 +131,7 @@ jobs:
           
       - name: Pushing Helm Chart
         run: |
-          sed -i "s/<CHART_VERSION>/${{ github.event.inputs.buildTag }}/" helm/Chart.yaml
+          sed -i "s/<CHART_VERSION>/${{ github.event.inputs.version }}/" helm/Chart.yaml
           REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
           cd helm
           helm dependency update

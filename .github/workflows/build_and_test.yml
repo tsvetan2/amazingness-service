@@ -57,9 +57,10 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           run: |
             mvn verify sonar:sonar \
-             -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=amazingitorg \
-            -Dsonar.projectKey=AmazingITorg_amazingness-service
+            -Dsonar.projectKey=AmazingITorg_amazingness-service \
+            -Dsonar.qualitygate.wait=true
       
   Snyk:
     runs-on: ubuntu-latest

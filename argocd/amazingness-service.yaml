@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/amazingitorg/charts
-    targetRevision: <VERION>
+    targetRevision: <VERSION>
     chart: amazingness-service
   destination:
     server: https://kubernetes.default.svc

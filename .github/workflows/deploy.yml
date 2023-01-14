@@ -18,8 +18,11 @@ jobs:
       - uses: azure/setup-kubectl@v2.0
         id: install
         
-      - name: Deploy app
+      - name: Set Version
         run: |
           sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
           cat argocd/amazingness-service.yaml
+        
+      - name: Deploy app
+        run: |
           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

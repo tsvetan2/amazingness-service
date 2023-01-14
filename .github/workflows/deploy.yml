@@ -84,7 +84,7 @@ jobs:
       
       - name: Commands
         run: |
-          kubectl get pods -n amazing
+          kubectl get pods -n amazing --kubeconfig=${HOME}/.kube/config
         
       - name: Set Version
         run: |

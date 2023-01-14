@@ -57,6 +57,35 @@ jobs:
       - uses: azure/setup-kubectl@v2.0
         id: install
         
+      - name: folders
+        run: |
+          mkdir ${HOME}/.kube
+          mkdir ${HOME}/.kube/certs
+          
+      - name: echo
+        run: echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+      
+      - name: ca
+        run: echo ${{ secrets.CA }} | base64 --decode > ${HOME}/.kube/certs/ca.crt
+        
+      - name: client cert
+        run: echo ${{ secrets.CLIENT_CERT }} | base64 --decode > ${HOME}/.kube/certs/client.crt
+        
+      - name: client key
+        run: echo ${{ secrets.CLIENT_KEY }} | base64 --decode > ${HOME}/.kube/certs/client.key
+        
+      - name: check echo
+        run: |
+          ls ${HOME}/.kube/certs
+          cat ${HOME}/.kube/config
+      
+      - name: Use context
+        run: kubectl config use-context minikube
+      
+      - name: Commands
+        run: |
+          kubectl get pods -n amazing
+        
       - name: Set Version
         run: |
           sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml

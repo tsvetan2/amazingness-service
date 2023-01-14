@@ -1,0 +1,21 @@
+name: Deploy Amazingness Service
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs: 
+      version:
+        description: New version number (e.g. 1.0.0)
+        required: true
+        
+jobs:
+  Deploy:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy app
+        run: |
+          sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
+          kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

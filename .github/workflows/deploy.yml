@@ -62,9 +62,9 @@ jobs:
           sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
           cat argocd/amazingness-service.yaml
       
-      - name: Debug
-        run: |
-          kubectl get pods -n amazing
+#       - name: Debug
+#         run: |
+#           kubectl get pods -n amazing
         
       - name: Deploy app
         run: |

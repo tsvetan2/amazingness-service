@@ -18,4 +18,5 @@ jobs:
       - name: Deploy app
         run: |
           sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
+          cat argocd/amazingness-service.yaml
           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

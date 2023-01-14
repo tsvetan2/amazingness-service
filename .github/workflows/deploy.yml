@@ -15,23 +15,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
   
-      - uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: get pods
-#       - name: Create kubeconfig
-#         run: |
-#           mkdir ${HOME}/.kube
-#           echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-#           cat ${HOME}/.kube/config
+#       - uses: actions-hub/kubectl@master
+#         env:
+#           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+#         with:
+#           args: get pods
+      - name: Create kubeconfig
+        run: |
+          mkdir ${HOME}/.kube
+          echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+          cat ${HOME}/.kube/config
       
-#       - name: Use context
-#         run: kubectl config use-context minikube
+      - name: Use context
+        run: kubectl config use-context minikube
       
-#       - name: Commands
-#         run: |
-#           kubectl get pods -n amazing
+      - name: Commands
+        run: |
+          kubectl get pods -n amazing
       
 #     runs-on: self-hosted
 

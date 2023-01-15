@@ -66,6 +66,8 @@ jobs:
 #     needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3

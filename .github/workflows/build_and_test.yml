@@ -66,8 +66,7 @@ jobs:
 #     needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    permissions:
-      checks: write
+    permissions: read-all|write-all
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -126,7 +125,7 @@ jobs:
       - name: Commit & Push new image version
         uses: actions-js/push@v1.3
         with:
-          github_token: ${{ secrets.TOKEN_COMMIT_PUSH }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           message: 'Version updated'
           branch:  ${{ github.ref_name }}
           repository: 'AmazingITorg/amazingness-service'

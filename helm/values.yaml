@@ -7,8 +7,7 @@ replicaCount: 1
 image:
   repository: docker.io/cekocvetkov/amazingness-service
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "dev"
+  tag: dev
 
 imagePullSecrets:
   - name: regcred

@@ -67,7 +67,7 @@ jobs:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     outputs:
-      dockertag: ${{ steps.dockerjob.outputs.test }}
+      output1: ${{ steps.step1.outputs.test }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -112,10 +112,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
-      - id: dockerjob
-        run: |
-          echo ${{ steps.meta.outputs.tags }}
-          echo "test=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+      - id: step1
+        run: echo "test=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
           
           
 #     git-leaks:
@@ -136,7 +134,7 @@ jobs:
     steps:
       - name: Update Version
         run: |
-         echo ${{needs.Build-and-push-docker-image.outputs.dockertag}}
+         echo ${{needs.Build-and-push-docker-image.outputs.output1}}
 
 #       - name: Commit and push changes
 #         uses: devops-infra/action-commit-push@v0.3

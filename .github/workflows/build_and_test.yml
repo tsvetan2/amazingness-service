@@ -122,12 +122,20 @@ jobs:
           echo ${{ steps.meta.outputs.tags }}
           sed -i "s/$version/$DOCKER_IMAGE_TAG/" ./helm/values.yaml
           cat ./helm/values.yaml
-     
-      - name: Commit and push new image version
-        uses: devops-infra/action-commit-push@v0.3
+  
+      - name: Commit & Push new image version
+        uses: actions-js/push@v1.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_message: Version updated
+          message: 'Version updated'
+          branch:  ${{ github.ref_name }}
+          repository: 'AmazingITorg/amazingness-service'
+  
+#       - name: Commit and push new image version
+#         uses: devops-infra/action-commit-push@v0.3
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           commit_message: Version updated
           
 #     git-leaks:
 #     name: secrets detection

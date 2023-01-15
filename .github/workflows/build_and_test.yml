@@ -126,7 +126,7 @@ jobs:
       - name: Commit and push new image version
         uses: devops-infra/action-commit-push@v0.3
         with:
-          github_token: ${{ secrets.TOKEN_COMMIT_PUSH }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           commit_message: Version updated
           
 #     git-leaks:

@@ -139,7 +139,7 @@ jobs:
     steps:
       - name: Update Version
         run: |
-         echo "${{needs.Build-and-push-docker-image.outputs.docker-tag}}"
+         echo ${{needs.Build-and-push-docker-image.outputs.docker-tag}}
 
 #       - name: Commit and push changes
 #         uses: devops-infra/action-commit-push@v0.3

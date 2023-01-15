@@ -114,8 +114,11 @@ jobs:
         run: |
           version=$(cat ./helm/values.yaml | grep tag: | awk '{print $2}')
           echo $version
+          echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2
+          DOCKER_VERSION=`echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2`
+          echo $DOCKER_VERSION
           echo ${{ steps.meta.outputs.tags }}
-          sed -i "s/$version/${{ steps.meta.outputs.tags }}/" ./helm/values.yaml
+          sed -i "s/$version/$DOCKER_VERSION/" ./helm/values.yaml
           cat ./helm/values.yaml
           
 #     git-leaks:

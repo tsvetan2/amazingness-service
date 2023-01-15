@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: docker.io/cekocvetkov/amazingness-service
   pullPolicy: Always
-  tag: dev
+  tag: sha-f4f42c37323724e429c383f7bad08dd486f1d9f6
 
 imagePullSecrets:
   - name: regcred

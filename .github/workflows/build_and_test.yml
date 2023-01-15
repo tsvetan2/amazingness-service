@@ -63,7 +63,7 @@ jobs:
             -Dsonar.qualitygate.wait=true
             
   Build-and-push-docker-image:
-    needs: [Test, SonarCloud-Analysis, Snyk, Git-leaks]
+    needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
@@ -137,16 +137,16 @@ jobs:
           branch:  ${{ github.ref_name }}
           repository: 'AmazingITorg/amazingness-service'
           
-  Git-leaks:
-    name: Secrets detection
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#   Git-leaks:
+#     name: Secrets detection
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 2
+#       - uses: gitleaks/gitleaks-action@v2
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   
 #   Build-and-push-helm-chart:

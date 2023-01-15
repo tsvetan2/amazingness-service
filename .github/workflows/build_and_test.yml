@@ -66,6 +66,8 @@ jobs:
 #     needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{steps.dockertag.outputs.DOCKER_TAG}}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -117,8 +119,6 @@ jobs:
           echo $TAG_SHA
           echo '::set-output name=DOCKER_TAG::$TAG_SHA'
           
-    outputs:
-      docker-tag: ${{steps.dockertag.outputs.DOCKER_TAG}}
 #     git-leaks:
 #     name: secrets detection
 #     runs-on: ubuntu-latest

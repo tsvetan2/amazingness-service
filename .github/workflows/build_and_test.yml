@@ -66,8 +66,6 @@ jobs:
 #     needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.step1.outputs.test }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -112,10 +110,15 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
-      - id: step1
-        run: echo "test=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+      - name: Set docker tag output
+      - id: dockertag
+        run: |
+          echo "TAG_SHA=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
+          echo $TAG_SHA
+          echo '::set-output name=DOCKER_TAG::$TAG_SHA'
           
-          
+    outputs:
+      docker-tag: ${{steps.dockertag.outputs.DOCKER_TAG}}
 #     git-leaks:
 #     name: secrets detection
 #     runs-on: ubuntu-latest
@@ -134,7 +137,7 @@ jobs:
     steps:
       - name: Update Version
         run: |
-         echo ${{needs.Build-and-push-docker-image.outputs.output1}}
+         echo "${{needs.Build-and-push-docker-image.outputs.docker-tag}}"
 
 #       - name: Commit and push changes
 #         uses: devops-infra/action-commit-push@v0.3

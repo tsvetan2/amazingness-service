@@ -115,11 +115,17 @@ jobs:
           version=$(cat ./helm/values.yaml | grep tag: | awk '{print $2}')
           echo $version
           echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2
-          DOCKER_VERSION=`echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2`
-          echo $DOCKER_VERSION
+          DOCKER_IMAGE_TAG=`echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2`
+          echo $DOCKER_IMAGE_TAG
           echo ${{ steps.meta.outputs.tags }}
-          sed -i "s/$version/$DOCKER_VERSION/" ./helm/values.yaml
+          sed -i "s/$version/$DOCKER_IMAGE_TAG/" ./helm/values.yaml
           cat ./helm/values.yaml
+     
+      - name: Commit and push new image version
+        uses: devops-infra/action-commit-push@v0.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: Version updated
           
 #     git-leaks:
 #     name: secrets detection

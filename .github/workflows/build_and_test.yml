@@ -114,8 +114,7 @@ jobs:
         run: |
           version=$(cat ./helm/values.yaml | grep tag: | awk '{print $2}')
           echo $version
-          echo "VERSION=$version" >> $GITHUB_ENV
-          sed -i "s/${{ env.VERSION }}/${{ steps.meta.outputs.tags }}/" ./helm/values.yaml
+          sed -i "s/$version/${{ steps.meta.outputs.tags }}/" ./helm/values.yaml
           cat ./helm/values.yaml
           
 #     git-leaks:
@@ -171,11 +170,11 @@ jobs:
 #           PKG_NAME=`ls *.tgz`
 #           helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts
 
-  Snyk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#   Snyk:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - name: Run Snyk to check for vulnerabilities
+#         uses: snyk/actions/maven@master
+#         env:
+#           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

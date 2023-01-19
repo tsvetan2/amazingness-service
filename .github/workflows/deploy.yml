@@ -10,16 +10,37 @@ on:
         
 jobs:
   Deploy:
-#     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: folders
+        run: |
+          mkdir ${HOME}/.kube
+          
+      - name: echo
+        run: echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+
+      - name: check echo
+        run: |
+          cat ${HOME}/.kube/config
+      
+      - name: Use context
+        run: kubectl config use-context docker-desktop
+      
+      - name: Commands
+        run: |
+          kubectl get pods -n amazing
+      
+#     runs-on: self-hosted
+
 #     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
-  
-# #       - uses: actions-hub/kubectl@master
-# #         env:
-# #           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-# #         with:
-# #           args: get pods
+#       - uses: actions/checkout@v3
+      
+#       - uses: azure/setup-kubectl@v2.0
+#         id: install
+        
 #       - name: folders
 #         run: |
 #           mkdir ${HOME}/.kube
@@ -47,49 +68,12 @@ jobs:
       
 #       - name: Commands
 #         run: |
-#           kubectl get pods -n amazing
-      
-    runs-on: self-hosted
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - uses: azure/setup-kubectl@v2.0
-        id: install
+#           kubectl get pods -n amazing --kubeconfig=${HOME}/.kube/config
         
-      - name: folders
-        run: |
-          mkdir ${HOME}/.kube
-          mkdir ${HOME}/.kube/certs
-          
-      - name: echo
-        run: echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-      
-      - name: ca
-        run: echo ${{ secrets.CA }} | base64 --decode > ${HOME}/.kube/certs/ca.crt
-        
-      - name: client cert
-        run: echo ${{ secrets.CLIENT_CERT }} | base64 --decode > ${HOME}/.kube/certs/client.crt
-        
-      - name: client key
-        run: echo ${{ secrets.CLIENT_KEY }} | base64 --decode > ${HOME}/.kube/certs/client.key
-        
-      - name: check echo
-        run: |
-          ls ${HOME}/.kube/certs
-          cat ${HOME}/.kube/config
-      
-      - name: Use context
-        run: kubectl config use-context minikube
-      
-      - name: Commands
-        run: |
-          kubectl get pods -n amazing --kubeconfig=${HOME}/.kube/config
-        
-      - name: Set Version
-        run: |
-          sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
-          cat argocd/amazingness-service.yaml
+#       - name: Set Version
+#         run: |
+#           sed -i -e "s/<VERSION>/${{ inputs.version }}/g" argocd/amazingness-service.yaml
+#           cat argocd/amazingness-service.yaml
       
 #       - name: Debug
 #         run: |

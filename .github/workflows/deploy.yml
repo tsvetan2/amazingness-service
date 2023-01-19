@@ -66,9 +66,9 @@ jobs:
 #       - name: Use context
 #         run: kubectl config use-context minikube
       
-      - name: Commands
-        run: |
-          kubectl get pods -n amazing
+#       - name: Commands
+#         run: |
+#           kubectl get pods -n amazing
         
 #       - name: Set Version
 #         run: |

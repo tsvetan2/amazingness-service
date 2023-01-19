@@ -10,36 +10,36 @@ on:
         
 jobs:
   Deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: folders
-        run: |
-          mkdir ${HOME}/.kube
-          
-      - name: echo
-        run: echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-
-      - name: check echo
-        run: |
-          cat ${HOME}/.kube/config
-      
-      - name: Use context
-        run: kubectl config use-context docker-desktop
-      
-      - name: Commands
-        run: |
-          kubectl get pods -n amazing
-      
-#     runs-on: self-hosted
-
+#     runs-on: ubuntu-latest
 #     steps:
-#       - uses: actions/checkout@v3
+#       - name: Checkout
+#         uses: actions/checkout@v3
+
+#       - name: folders
+#         run: |
+#           mkdir ${HOME}/.kube
+          
+#       - name: echo
+#         run: echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+
+#       - name: check echo
+#         run: |
+#           cat ${HOME}/.kube/config
       
-#       - uses: azure/setup-kubectl@v2.0
-#         id: install
+#       - name: Use context
+#         run: kubectl config use-context docker-desktop
+      
+#       - name: Commands
+#         run: |
+#           kubectl get pods -n amazing
+      
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: azure/setup-kubectl@v2.0
+        id: install
         
 #       - name: folders
 #         run: |
@@ -66,9 +66,9 @@ jobs:
 #       - name: Use context
 #         run: kubectl config use-context minikube
       
-#       - name: Commands
-#         run: |
-#           kubectl get pods -n amazing --kubeconfig=${HOME}/.kube/config
+      - name: Commands
+        run: |
+          kubectl get pods -n amazing
         
 #       - name: Set Version
 #         run: |
@@ -79,6 +79,6 @@ jobs:
 #         run: |
 #           kubectl get pods -n amazing
         
-      - name: Deploy app
-        run: |
-          kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 
+#       - name: Deploy app
+#         run: |
+#           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

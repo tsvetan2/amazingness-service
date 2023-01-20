@@ -11,7 +11,10 @@ on:
         required: true
         default: 1.0.0
   push:
-  
+ 
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
 jobs:
   Test:
     runs-on: ubuntu-latest
@@ -179,7 +182,7 @@ jobs:
           cd ..
           helm package helm   
           PKG_NAME=`ls *.tgz`
-          helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts/${{ github.ref }}
+          helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts/${{ env.BRANCH_NAME }}
 
   Deploy:
     needs: [Build-and-push-helm-chart]
@@ -193,7 +196,7 @@ jobs:
       - name: Deploy app
         run: |
           sed -i "s/<VERSION>/${{needs.Build-and-push-helm-chart.outputs.charttag}}/" argocd/amazingness-service.yaml
-          sed -i "s/<BRANCH>/${{ github.ref }}/" argocd/amazingness-service.yaml
+          sed -i "s/<BRANCH>/${{ env.BRANCH_NAME }}/" argocd/amazingness-service.yaml
           
           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 
 

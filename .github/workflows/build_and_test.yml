@@ -2,6 +2,15 @@ name: Amazingness Service Build and Test
 
 on:
   workflow_dispatch:
+    inputs: 
+      buildTag:
+        description: Build specific tagged version
+        required: false
+      version:
+        description: Untagged Version
+        required: true
+        default: 1.0.0
+  push:
   
 jobs:
   Test:
@@ -66,14 +75,8 @@ jobs:
     needs: [Test, SonarCloud-Analysis, Snyk]
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      checks: write
-      contents: write
-      issues: write
-      discussions: write
-      packages: write
-      repository-projects: write
+    outputs:
+      imagetag: ${{ steps.dockertag.outputs.tag }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -118,63 +121,80 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
+      - name: Set docker image tag output
+        id: dockertag
+        run: |
+          DOCKER_IMAGE_TAG=`echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2`
+          echo $DOCKER_IMAGE_TAG
+          echo "tag=$DOCKER_IMAGE_TAG" >> $GITHUB_OUTPUT
+          
+  Build-and-push-helm-chart:
+    name: Build and push to ghcr
+    needs: [Build-and-push-docker-image]
+    runs-on: ubuntu-latest
+    outputs:
+      chartversion: ${{ steps.charttag.outputs.tag }}
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout
+          
       - name: Update Version
+        id: charttag
         run: |
           version=$(cat ./helm/values.yaml | grep tag: | awk '{print $2}')
           echo $version
           echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2
-          DOCKER_IMAGE_TAG=`echo ${{ steps.meta.outputs.tags }} | cut -d ":" -f2`
+          DOCKER_IMAGE_TAG=`echo ${{needs.Build-and-push-docker-image.outputs.imagetag}} | cut -d ":" -f2`
           echo $DOCKER_IMAGE_TAG
           echo ${{ steps.meta.outputs.tags }}
           sed -i "s/$version/$DOCKER_IMAGE_TAG/" ./helm/values.yaml
           cat ./helm/values.yaml
-  
-      - name: Commit & Push new image version
-        uses: actions-js/push@v1.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: 'Version updated'
-          branch:  ${{ github.ref_name }}
-          repository: 'AmazingITorg/amazingness-service'
           
-#   Git-leaks:
-#     name: Secrets detection
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#         with:
-#           fetch-depth: 2
-#       - uses: gitleaks/gitleaks-action@v2
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION=${{ github.event.inputs.buildTag }}
+          TAGGED_BUILD="false"
+          if [ -z "$VERSION" ]
+          then
+              VERSION=`echo ${{ github.event.inputs.version }}-$GITHUB_RUN_NUMBER`
+          else
+              VERSION=`echo ${{ github.event.inputs.buildTag }}`
+          fi
+          
+          echo $VERSION
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          sed -i "s/<CHART_VERSION>/$VERSION/" helm/Chart.yaml
+         
+      - name: Login to ghcr container registry 
+        run: |
+          REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+         
+      - name: Pushing Helm Chart
+        run: |
+          REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
 
-  
-#   Build-and-push-helm-chart:
-#     name: Build and push to ghcr
-#     needs: [Build-and-push-docker-image]
-#     runs-on: ubuntu-latest
-#     permissions:
-#       packages: write
-#     steps:
-#       - uses: actions/checkout@v3
-#         name: Checkout
-            
-#       - uses: actions/checkout@v2
-#       - name: Login to ghcr container registry
-#         run: |
-#           REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
-#           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          cd helm
+          helm dependency update
+          cd ..
+          helm package helm   
+          PKG_NAME=`ls *.tgz`
+          helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts/${{ github.ref }}
+
+  Deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: azure/setup-kubectl@v2.0
+        id: install
+        
+      - name: Deploy app
+        run: |
+          sed -i "s/<VERSION>/${{needs.Build-and-push-helm-chart.outputs.charttag}}/" argocd/amazingness-service.yaml
+          sed -i "s/<BRANCH>/${{ github.ref }}/" argocd/amazingness-service.yaml
           
-#       - name: Pushing Helm Chart
-#         run: |
-#           sed -i "s/<CHART_VERSION>/0.0.0/" helm/Chart.yaml
-#           REPO_OWNER=`echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]'`
-#           cd helm
-#           helm dependency update
-#           cd ..
-#           helm package helm   
-#           PKG_NAME=`ls *.tgz`
-#           helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts
+          kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 
 
   Snyk:
     runs-on: ubuntu-latest

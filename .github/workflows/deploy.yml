@@ -40,11 +40,11 @@ jobs:
       
       - uses: azure/setup-kubectl@v2.0
         id: install
-      - name: Commands
-        run: |
-          kubectl get pods
-          kubectl get pods -n amazing
-          kubectl get pods -n argocd
+#       - name: Commands
+#         run: |
+#           kubectl get pods
+#           kubectl get pods -n amazing
+#           kubectl get pods -n argocd
 #       - name: folders
 #         run: |
 #           mkdir ${HOME}/.kube
@@ -84,6 +84,6 @@ jobs:
 #         run: |
 #           kubectl get pods -n amazing
         
-#       - name: Deploy app
-#         run: |
-#           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 
+      - name: Deploy app
+        run: |
+          kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

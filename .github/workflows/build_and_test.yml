@@ -182,6 +182,7 @@ jobs:
           helm push ${PKG_NAME} oci://ghcr.io/${REPO_OWNER}/charts/${{ github.ref }}
 
   Deploy:
+    needs: [Build-and-push-helm-chart]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3

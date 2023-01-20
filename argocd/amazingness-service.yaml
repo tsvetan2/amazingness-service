@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/AmazingITorg/amazingness-service
-    targetRevision: HEAD
-    path: helm
+    repoURL: ghcr.io/amazingitorg/charts
+    targetRevision: <VERSION>
+    chart: <BRANCH>/amazingness-service
   destination:
     server: https://kubernetes.default.svc
     namespace: amazing

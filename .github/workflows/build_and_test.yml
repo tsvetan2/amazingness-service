@@ -168,6 +168,7 @@ jobs:
           echo $VERSION
           echo "tag=$VERSION" >> $GITHUB_OUTPUT
           sed -i "s/<CHART_VERSION>/$VERSION/" helm/Chart.yaml
+          cat helm/Chart.yaml
          
       - name: Login to ghcr container registry 
         run: |
@@ -196,7 +197,8 @@ jobs:
         
       - name: Deploy app
         run: |
-          sed -i "s/<VERSION>/${{needs.Build-and-push-helm-chart.outputs.charttag}}/" argocd/amazingness-service.yaml
+          echo ${{needs.Build-and-push-helm-chart.outputs.chartversion}}
+          sed -i "s/<VERSION>/${{needs.Build-and-push-helm-chart.outputs.chartversion}}/" argocd/amazingness-service.yaml
           sed -i "s/<BRANCH>/${{ env.BRANCH_NAME }}/" argocd/amazingness-service.yaml
           
           kubectl apply -f "argocd/amazingness-service.yaml" -n argocd 

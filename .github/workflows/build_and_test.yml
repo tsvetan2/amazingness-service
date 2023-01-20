@@ -11,9 +11,10 @@ on:
         required: true
         default: 1.0.0
   push:
- 
+    
 env:
  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+ DEFAULT_RELEASE_VERSION: "1.0.0"
 
 jobs:
   Test:
@@ -159,7 +160,7 @@ jobs:
           TAGGED_BUILD="false"
           if [ -z "$VERSION" ]
           then
-              VERSION=`echo ${{ github.event.inputs.version }}-$GITHUB_RUN_NUMBER`
+              VERSION=`echo ${{ $DEFAULT_RELEASE_VERSION }}-$GITHUB_RUN_NUMBER`
           else
               VERSION=`echo ${{ github.event.inputs.buildTag }}`
           fi

@@ -160,7 +160,7 @@ jobs:
           TAGGED_BUILD="false"
           if [ -z "$VERSION" ]
           then
-              VERSION=`echo ${{ $DEFAULT_RELEASE_VERSION }}-$GITHUB_RUN_NUMBER`
+              VERSION=`echo ${{ DEFAULT_RELEASE_VERSION }}-$GITHUB_RUN_NUMBER`
           else
               VERSION=`echo ${{ github.event.inputs.buildTag }}`
           fi

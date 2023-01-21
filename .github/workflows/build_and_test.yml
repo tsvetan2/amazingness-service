@@ -76,7 +76,7 @@ jobs:
             -Dsonar.qualitygate.wait=true
             
   Build-and-push-docker-image:
-    needs: [Test, SonarCloud-Analysis, Snyk]
+    needs: [Test, SonarCloud-Analysis, Snyk, GitGuardian-Scan]
     name: Build and push Docker image
     runs-on: ubuntu-latest
     outputs:
